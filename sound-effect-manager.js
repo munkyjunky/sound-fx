@@ -84,7 +84,36 @@ SoundEffectManager.prototype._loadFallbackAudioFile = function (url, name, delay
             a.src = url;
             // for our callback
             if (i === 0 && cb) {
-                a.addEventListener('canplaythrough', cb, false);
+
+            	a.addEventListener('canplaythrough', function () {
+                	cb(null, a);
+                }, false);
+
+	            a.addEventListener('error', function (e) {
+
+	            	var err;
+
+		            switch (e.target.error.code) {
+			            case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+			            	err = new Error('MEDIA_ERR_SRC_NOT_SUPPORTED');
+				            break;
+			            case e.target.error.MEDIA_ERR_ABORTED:
+				            err = new Error('MEDIA_ERR_ABORTED');
+				            break;
+			            case e.target.error.MEDIA_ERR_DECODE:
+				            err = new Error('MEDIA_ERR_DECODE');
+				            break;
+			            case e.target.error.MEDIA_ERR_NETWORK:
+				            err = new Error('MEDIA_ERR_NETWORK');
+				            break;
+			            default:
+			            	err = new Error();
+				            break;
+		            }
+
+	            	cb(err);
+	            }, false);
+
             }
             a.load();
             self.sounds[name][i++] = a;
