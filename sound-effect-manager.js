@@ -7,6 +7,16 @@ HTML5 Web Audio API (as only available in webkit, at the moment).
 By @HenrikJoreteg from &yet
 */
 
+// Get the audio extension to use for the current browser
+function getAudioExtension () {
+	var a = document.createElement('audio');
+
+	if (!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))) {
+		return '.mp3';
+	}
+
+	return '.wav';
+}
 
 function SoundEffectManager () {
     this.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -25,7 +35,7 @@ SoundEffectManager.prototype.loadFile = function (url, name, delay, cb) {
     if (this.support) {
         this._loadWebAudioFile(url, name, delay, cb);
     } else {
-        this._loadWaveFile(url.replace('.mp3', '.wav'), name, delay, 3, cb);
+        this._loadFallbackAudioFile(url.replace('.mp3', getAudioExtension()), name, delay, 3, cb);
     }
 };
 
@@ -61,7 +71,7 @@ SoundEffectManager.prototype._loadWebAudioFile = function (url, name, delay, cb)
     }, delay || 0);
 };
 
-SoundEffectManager.prototype._loadWaveFile = function (url, name, delay, multiplexLimit, cb) {
+SoundEffectManager.prototype._loadFallbackAudioFile = function (url, name, delay, multiplexLimit, cb) {
     var self = this;
     var limit = multiplexLimit || 3;
 
@@ -106,7 +116,7 @@ SoundEffectManager.prototype._playWebAudio = function (soundName, loop) {
     source.start(0);
 };
 
-SoundEffectManager.prototype._playWavAudio = function (soundName, loop) {
+SoundEffectManager.prototype._playFallbackAudio = function (soundName, loop) {
     var audio = this.sounds[soundName];
     var howMany = audio && audio.length || 0;
     var i = 0;
@@ -135,7 +145,7 @@ SoundEffectManager.prototype.play = function (soundName, loop) {
     if (this.support) {
         this._playWebAudio(soundName, loop);
     } else {
-        return this._playWavAudio(soundName, loop);
+        return this._playFallbackAudio(soundName, loop);
     }
 };
 
