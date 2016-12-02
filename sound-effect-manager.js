@@ -32,23 +32,12 @@
 		this.sources = {};
 	}
 
-	// Get the audio extension to use for the current browser
-	function getAudioExtension () {
-		var a = document.createElement('audio');
-
-		if (!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))) {
-			return '.mp3';
-		}
-
-		return '.wav';
-	}
-
 	// async load a file at a given URL, store it as 'name'.
 	SoundEffectManager.prototype.loadFile = function (url, name, delay, cb) {
 		if (this.support) {
 			this._loadWebAudioFile(url, name, delay, cb);
 		} else {
-			this._loadFallbackAudioFile(url.replace('.mp3', getAudioExtension()), name, delay, 3, cb);
+			this._loadFallbackAudioFile(url, name, delay, 3, cb);
 		}
 	};
 
