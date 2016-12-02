@@ -1,12 +1,12 @@
-/*
- SoundEffectManager
-
- Loads and plays sound effects useing
- HTML5 Web Audio API (as only available in webkit, at the moment).
-
- By @HenrikJoreteg from &yet
+/**
+ * Loads and plays sound effects using HTML5 Web Audio API where available,
+ * falling back to using audio elements where not available.
+ *
+ * Supports loading sounds by URL, or data URI.
+ *
+ * @module SoundEffectManager
+ * @author @HenrikJoreteg
  */
-
 (function(factory) {
 
 	var root = (typeof self == 'object' && self.self === self && self) ||
@@ -32,16 +32,18 @@
 		this.sources = {};
 	}
 
-	// async load a file at a given URL, store it as 'name'.
-	SoundEffectManager.prototype.loadFile = function (url, name, delay, cb) {
-		if (this.support) {
-			this._loadWebAudioFile(url, name, delay, cb);
-		} else {
-			this._loadFallbackAudioFile(url, name, delay, 3, cb);
+	/* Converts base64 audio to buffer */
+	SoundEffectManager.prototype._base64ToArrayBuffer = function (base64) {
+		var binaryString = root.atob(base64);
+		var len = binaryString.length;
+		var bytes = new Uint8Array(len);
+		for (var i = 0; i < len; i++)        {
+			bytes[i] = binaryString.charCodeAt(i);
 		}
-	};
+		return bytes.buffer;
+	}
 
-	// async load a file at a given URL, store it as 'name'.
+	/* async load a file at a given URL, or decrypt a data encoded string, and store it as 'name' */
 	SoundEffectManager.prototype._loadWebAudioFile = function (url, name, delay, cb) {
 		if (!this.support) {
 			return;
@@ -78,6 +80,7 @@
 		}, delay || 0);
 	};
 
+	/* Create an audio element and set the src to the passed url */
 	SoundEffectManager.prototype._loadFallbackAudioFile = function (url, name, delay, multiplexLimit, cb) {
 		var self = this;
 		var limit = multiplexLimit || 3;
@@ -128,6 +131,7 @@
 		}, delay || 0);
 	};
 
+	/* Play a loaded sound through AudioContext */
 	SoundEffectManager.prototype._playWebAudio = function (soundName, loop) {
 		var self = this;
 		var buffer = this.sounds[soundName];
@@ -141,16 +145,6 @@
 			return;
 		}
 
-		function base64ToArrayBuffer(base64) {
-			var binaryString = root.atob(base64);
-			var len = binaryString.length;
-			var bytes = new Uint8Array(len);
-			for (var i = 0; i < len; i++)        {
-				bytes[i] = binaryString.charCodeAt(i);
-			}
-			return bytes.buffer;
-		}
-
 		var source = self.context.createBufferSource();
 		source.loop = loop;
 		if (loop) {
@@ -161,7 +155,7 @@
 		if (typeof buffer === 'string' && buffer.indexOf('data:audio') !== -1) {
 			var newBuffer = buffer.replace(/^data:audio\/(?:\w+);base64,/, '');
 
-			this.context.decodeAudioData(base64ToArrayBuffer(newBuffer), function(decodedData) {
+			this.context.decodeAudioData(this._base64ToArrayBuffer(newBuffer), function(decodedData) {
 				source.buffer = decodedData;
 			});
 		} else {
@@ -172,6 +166,7 @@
 		source.start(0);
 	};
 
+	/* Play a loaded sound through an Audio element */
 	SoundEffectManager.prototype._playFallbackAudio = function (soundName, loop) {
 		var audio = this.sounds[soundName];
 		var howMany = audio && audio.length || 0;
@@ -197,6 +192,26 @@
 		}
 	};
 
+	/**
+	 * Load the given URL asynchronously, and store it as 'name'
+	 * @param {string} url - URL (or data URI) to load
+	 * @param {String} name - Name to store the sound under
+	 * @param {number} delay - Delay before attempting to load the file
+	 * @param {function} cb - Callback once sound is loaded
+	 */
+	SoundEffectManager.prototype.loadFile = function (url, name, delay, cb) {
+		if (this.support) {
+			this._loadWebAudioFile(url, name, delay, cb);
+		} else {
+			this._loadFallbackAudioFile(url, name, delay, 3, cb);
+		}
+	};
+
+	/**
+	 * Play a sound that has previously been loaded
+	 * @param {string} soundName - Name of sound to play
+	 * @param {boolean} loop - Play sound on a loop
+	 */
 	SoundEffectManager.prototype.play = function (soundName, loop) {
 		if (this.support) {
 			this._playWebAudio(soundName, loop);
@@ -205,6 +220,10 @@
 		}
 	};
 
+	/**
+	 * Stop a playing sound
+	 * @param {string} soundName - Name of sound to stop
+	 */
 	SoundEffectManager.prototype.stop = function (soundName) {
 		if (this.support) {
 			if (this.sources[soundName]) {
