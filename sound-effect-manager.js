@@ -13,15 +13,15 @@
 		(typeof global == 'object' && global.global === global && global);
 
 	if (typeof module !== 'undefined' && typeof exports !== 'undefined') {
-		module.exports = factory();
+		module.exports = factory(root);
 	} else {
-		root.SoundEffectManager = factory();
+		root.SoundEffectManager = factory(root);
 	}
 
-})(function () {
+})(function (root) {
 
 	function SoundEffectManager () {
-		this.AudioContext = window.AudioContext || window.webkitAudioContext;
+		this.AudioContext = root.AudioContext || root.webkitAudioContext;
 
 		this.support = !!this.AudioContext;
 		if (this.support) {
@@ -153,7 +153,7 @@
 		}
 
 		function base64ToArrayBuffer(base64) {
-			var binaryString = window.atob(base64);
+			var binaryString = root.atob(base64);
 			var len = binaryString.length;
 			var bytes = new Uint8Array(len);
 			for (var i = 0; i < len; i++)        {
