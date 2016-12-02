@@ -46,13 +46,13 @@ SoundEffectManager.prototype._loadWebAudioFile = function (url, name, delay, cb)
     }
 
     var self = this;
-    var request = new XMLHttpRequest();
 
-    if (url.indexOf('data') !== -1) {
+    if (url.indexOf('data') !== -1 && typeof atob === 'function') {
         self.sounds[name] = url;
         return cb(url);
     }
 
+	var request = new XMLHttpRequest();
     request.open('GET', url, true);
     request.responseType = 'arraybuffer';
     request.onload = function () {
@@ -149,12 +149,11 @@ SoundEffectManager.prototype._playWebAudio = function (soundName, loop) {
         return bytes.buffer;
     }
 
+	var source = self.context.createBufferSource();
 
     // Base64 data string
-    if (buffer.indexOf('data') !== -1) {
-        const newBuffer = buffer.replace('data:audio/mpeg;base64,', '');
-
-        var source = self.context.createBufferSource();
+    if ('indexOf' in buffer && buffer.indexOf('data:audio') !== -1) {
+        const newBuffer = buffer.replace(/^data:audio\/(?:\w+);/, '');
 
         this.context.decodeAudioData(base64ToArrayBuffer(newBuffer), function(decodedData) {
             source.buffer = decodedData;
