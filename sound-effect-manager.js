@@ -153,7 +153,7 @@
 
 		// Base64 data string
 		if (typeof buffer === 'string' && buffer.indexOf('data:audio') !== -1) {
-			var newBuffer = buffer.replace(/^data:audio\/(?:\w+);base64,/, '');
+			var newBuffer = buffer.replace(/^data:audio\/(?:[\-\w]+);(?:[\w\-=]+;)?base64,/, '');
 
 			this.context.decodeAudioData(this._base64ToArrayBuffer(newBuffer), function(decodedData) {
 				source.buffer = decodedData;
@@ -163,7 +163,7 @@
 		}
 
 		source.connect(self.context.destination);
-		source.start(0);
+		'noteOn' in source ? source.noteOn(0) : source.start(0);
 	};
 
 	/* Play a loaded sound through an Audio element */
