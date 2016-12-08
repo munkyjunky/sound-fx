@@ -41,7 +41,7 @@
 			bytes[i] = binaryString.charCodeAt(i);
 		}
 		return bytes.buffer;
-	}
+	};
 
 	/* async load a file at a given URL, or decrypt a data encoded string, and store it as 'name' */
 	SoundEffectManager.prototype._loadWebAudioFile = function (url, name, delay, cb) {
@@ -132,7 +132,7 @@
 	};
 
 	/* Play a loaded sound through AudioContext */
-	SoundEffectManager.prototype._playWebAudio = function (soundName, loop) {
+	SoundEffectManager.prototype._playWebAudio = function (soundName, loop, cb) {
 		var self = this;
 		var buffer = this.sounds[soundName];
 
@@ -162,12 +162,16 @@
 			source.buffer = buffer;
 		}
 
+		if (cb) {
+			source.onended = cb;
+		}
+
 		source.connect(self.context.destination);
 		'noteOn' in source ? source.noteOn(0) : source.start(0);
 	};
 
 	/* Play a loaded sound through an Audio element */
-	SoundEffectManager.prototype._playFallbackAudio = function (soundName, loop) {
+	SoundEffectManager.prototype._playFallbackAudio = function (soundName, loop, cb) {
 		var audio = this.sounds[soundName];
 		var howMany = audio && audio.length || 0;
 		var i = 0;
@@ -179,6 +183,13 @@
 
 		while (i < howMany) {
 			currSound = audio[i++];
+
+			if (cb) {
+				currSound.addEventListener('ended', function () {
+					cb();
+				});
+			}
+
 			// this covers case where we loaded an unplayable file type
 			if (currSound.error) {
 				return;
@@ -211,12 +222,13 @@
 	 * Play a sound that has previously been loaded
 	 * @param {string} soundName - Name of sound to play
 	 * @param {boolean} loop - Play sound on a loop
+	 * @param {function} cb - Callback when the sound has ended
 	 */
-	SoundEffectManager.prototype.play = function (soundName, loop) {
+	SoundEffectManager.prototype.play = function (soundName, loop, cb) {
 		if (this.support) {
-			this._playWebAudio(soundName, loop);
+			this._playWebAudio(soundName, loop, cb);
 		} else {
-			return this._playFallbackAudio(soundName, loop);
+			return this._playFallbackAudio(soundName, loop, cb);
 		}
 	};
 
@@ -242,6 +254,24 @@
 				currSound.currentTime = 0;
 			}
 		}
+	};
+
+	/**
+	 * Check if a sound has been added
+	 * @param {string} soundName - Name of sound to check
+	 * @returns {boolean}
+	 */
+	SoundEffectManager.prototype.has = function (soundName) {
+		return this.sounds.hasOwnProperty(soundName);
+	};
+
+	/**
+	 * Remove a sound from memory
+	 * @param {string} soundName - Name of sound to remove
+	 */
+	SoundEffectManager.prototype.remove = function (soundName) {
+		this.stop(soundName);
+		delete this.sounds[soundName];
 	};
 
 	return SoundEffectManager;
