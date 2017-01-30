@@ -2,7 +2,7 @@
 
 SoundFX is a sound effect manager with support for IE9+, Chrome, Firefox and Safari, which uses the HTML5 Web Audio API where available, and falls back to `<audio>` elements.
 
-Forked from SoundEffectManager, but now includes support for:
+Forked from [SoundEffectManager](https://github.com/HenrikJoreteg/SoundEffectManager), but now includes support for:
 - loading files by url
 - loading files by data-uri
 - any audio codec supported by your target browser(s)
