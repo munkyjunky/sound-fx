@@ -1,4 +1,5 @@
 # SoundFX
+[![NPM version][npm-image]][npm-url]
 
 SoundFX is a sound effect manager with support for IE9+, Chrome, Firefox and Safari, which uses the HTML5 Web Audio API where available, and falls back to `<audio>` elements.
 
@@ -63,3 +64,6 @@ MIT
 ## Credits
 
 Built (rather hastily) by [@HenrikJoreteg](http://twitter.com/henrikjoreteg) for use in [And Bang](http://andbang.com). Extended by [@munkyjunky](https://github.com/munkyjunky) for use at [Degree53](https://Degree53.com).
+
+[npm-image]: https://badge.fury.io/js/sound-fx.svg
+[npm-url]: https://npmjs.org/package/sound-fx
