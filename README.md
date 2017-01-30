@@ -1,46 +1,60 @@
-# SoundEffectManager
+# SoundFX
 
-Is just that. It's a simple sound effect manager for playing sounds using the awesome HTML 5 Web Audio API.
+SoundFX is a sound effect manager with support for IE9+, Chrome, Firefox and Safari, which uses the HTML5 Web Audio API where available, and falls back to `<audio>` elements.
 
-If you think I'm talking about `<audio>` tags, go read this: http://www.html5rocks.com/en/tutorials/webaudio/intro/
-
-It's significantly better than `<audio>` tags for several reasons:
-
-- You don't have to create a tag for each sound you want to play
-- You can multiplex an effect without having to create duplicate tags
-- You can also control volume and add other effects
-
-<!-- starthide -->
-Part of the [Ampersand.js toolkit](http://ampersandjs.com) for building clientside applications.
-<!-- endhide -->
+Forked from SoundEffectManager, but now includes support for:
+- loading files by url
+- loading files by data-uri
+- any audio codec supported by your target browser(s)
 
 ## Installing
 
-`npm install sound-effect-manager`
+`npm install sound-fx`
 
 ## Using it
 
 ```js
-// just init the sound effect manager
-var SoundEffectManager = require('sound-effect-manager');
-
-var sm = new SoundEffectManager();
+// Create an instance of SoundFX
+var SoundFX = require('sound-fx');
+var sfx = new SoundFX();
 
 // load some files by passing it a url and a name
-sm.loadFile('taps.mp3', 'taps');
-sm.loadFile('rocket.wav', 'rocket');
+sfx.load('taps.mp3', 'taps');
+sfx.load('rocket.wav', 'rocket');
 
 // then play the sounds like so:
-sm.play('rocket');
+sfx.play('rocket');
 
 // or play a sound in looping mode:
-sm.play('taps', true);
+sfx.play('taps', true);
 
 // and to stop a loop:
-sm.stop('taps');
+sfx.stop('taps');
 
 // that's it!
 ```
+
+## API
+
+#### `load (url, name, delay, callback)`
+- `<String> url` - URI or data-encoded string of audio file to load
+- `<String> name` - Name to save sound against
+- `<Number> delay` - Delay before loading the file (ms)
+- `<Function (err, data)> callback` - Callback once the file has been loaded
+
+#### `play (<string> name, <boolean> loop, <func> callback)`
+- `<String> name` - Name of sound to play
+- `<Boolean> loop` - Play the sound on a loop
+- `<Function (err, data)> callback` - Callback once the sound has been played
+
+#### `stop (<string> name)`
+- `<String> name` - Name of sound to stop playing
+
+#### `has (<string> name)`
+- `<String> name` - Check if a sound has been loaded
+
+#### `remove (<string> name)`
+- `<String> name` - Name of sound to remove
 
 ## License
 
@@ -48,4 +62,4 @@ MIT
 
 ## Credits
 
-Built (rather hastily) by [@HenrikJoreteg](http://twitter.com/henrikjoreteg) for use in [And Bang](http://andbang.com). Which you should totally check out if you work with a team, for anything, ever.
+Built (rather hastily) by [@HenrikJoreteg](http://twitter.com/henrikjoreteg) for use in [And Bang](http://andbang.com). Extended by [@munkyjunky](https://github.com/munkyjunky) for use at [Degree53](https://Degree53.com).

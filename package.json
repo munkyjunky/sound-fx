@@ -1,14 +1,11 @@
 {
-  "name": "sound-effect-manager",
-  "description": "Easy way to manage and play sound effects using HTML5 Web Audio API",
+  "name": "sound-fx",
+  "description": "An easy way to manage and play sound effects",
   "version": "1.0.1",
-  "author": "Henrik Joreteg <henrik@andyet.net>",
-  "main": "./sound-effect-manager.js",
+  "author": "Simon Wears <munkyjunky@gmail.com>",
+  "main": "./sound-fx.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/henrikjoreteg/SoundEffectManager.git"
-  },
-  "scripts": {
-    "validate": "jshint ."
+    "url": "git://github.com/munkyjunky/sound-fx.git"
   }
 }

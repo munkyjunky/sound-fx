@@ -4,8 +4,8 @@
  *
  * Supports loading sounds by URL, or data URI.
  *
- * @module SoundEffectManager
- * @author @HenrikJoreteg
+ * @module SoundFX
+ * @author @munkyjunky
  */
 (function(factory) {
 
@@ -15,12 +15,12 @@
 	if (typeof module !== 'undefined' && typeof exports !== 'undefined') {
 		module.exports = factory(root);
 	} else {
-		root.SoundEffectManager = factory(root);
+		root.SoundFX = factory(root);
 	}
 
 })(function (root) {
 
-	function SoundEffectManager () {
+	function SoundFX () {
 		this.AudioContext = root.AudioContext || root.webkitAudioContext;
 
 		this.support = !!this.AudioContext;
@@ -33,7 +33,7 @@
 	}
 
 	/* Converts base64 audio to buffer */
-	SoundEffectManager.prototype._base64ToArrayBuffer = function (base64) {
+	SoundFX.prototype._base64ToArrayBuffer = function (base64) {
 		var binaryString = root.atob(base64);
 		var len = binaryString.length;
 		var bytes = new Uint8Array(len);
@@ -44,7 +44,7 @@
 	};
 
 	/* async load a file at a given URL, or decrypt a data encoded string, and store it as 'name' */
-	SoundEffectManager.prototype._loadWebAudioFile = function (url, name, delay, cb) {
+	SoundFX.prototype._loadWebAudioFile = function (url, name, delay, cb) {
 		if (!this.support) {
 			return;
 		}
@@ -81,7 +81,7 @@
 	};
 
 	/* Create an audio element and set the src to the passed url */
-	SoundEffectManager.prototype._loadFallbackAudioFile = function (url, name, delay, multiplexLimit, cb) {
+	SoundFX.prototype._loadFallbackAudioFile = function (url, name, delay, multiplexLimit, cb) {
 		var self = this;
 		var limit = multiplexLimit || 3;
 
@@ -132,7 +132,7 @@
 	};
 
 	/* Play a loaded sound through AudioContext */
-	SoundEffectManager.prototype._playWebAudio = function (soundName, loop, cb) {
+	SoundFX.prototype._playWebAudio = function (soundName, loop, cb) {
 		var self = this;
 		var buffer = this.sounds[soundName];
 
@@ -171,7 +171,7 @@
 	};
 
 	/* Play a loaded sound through an Audio element */
-	SoundEffectManager.prototype._playFallbackAudio = function (soundName, loop, cb) {
+	SoundFX.prototype._playFallbackAudio = function (soundName, loop, cb) {
 		var audio = this.sounds[soundName];
 		var howMany = audio && audio.length || 0;
 		var i = 0;
@@ -210,7 +210,7 @@
 	 * @param {number} delay - Delay before attempting to load the file
 	 * @param {function} cb - Callback once sound is loaded
 	 */
-	SoundEffectManager.prototype.loadFile = function (url, name, delay, cb) {
+	SoundFX.prototype.load = function (url, name, delay, cb) {
 		if (this.support) {
 			this._loadWebAudioFile(url, name, delay, cb);
 		} else {
@@ -224,7 +224,7 @@
 	 * @param {boolean} loop - Play sound on a loop
 	 * @param {function} cb - Callback when the sound has ended
 	 */
-	SoundEffectManager.prototype.play = function (soundName, loop, cb) {
+	SoundFX.prototype.play = function (soundName, loop, cb) {
 		if (this.support) {
 			this._playWebAudio(soundName, loop, cb);
 		} else {
@@ -236,7 +236,7 @@
 	 * Stop a playing sound
 	 * @param {string} soundName - Name of sound to stop
 	 */
-	SoundEffectManager.prototype.stop = function (soundName) {
+	SoundFX.prototype.stop = function (soundName) {
 		if (this.support) {
 			if (this.sources[soundName]) {
 				this.sources[soundName].stop(0);
@@ -261,7 +261,7 @@
 	 * @param {string} soundName - Name of sound to check
 	 * @returns {boolean}
 	 */
-	SoundEffectManager.prototype.has = function (soundName) {
+	SoundFX.prototype.has = function (soundName) {
 		return this.sounds.hasOwnProperty(soundName);
 	};
 
@@ -269,11 +269,11 @@
 	 * Remove a sound from memory
 	 * @param {string} soundName - Name of sound to remove
 	 */
-	SoundEffectManager.prototype.remove = function (soundName) {
+	SoundFX.prototype.remove = function (soundName) {
 		this.stop(soundName);
 		delete this.sounds[soundName];
 	};
 
-	return SoundEffectManager;
+	return SoundFX;
 
 });
