@@ -1,16 +1,7 @@
 # SoundFX
 [![NPM version][npm-image]][npm-url]
 
-SoundFX is a sound effect manager with support for IE9+, Chrome, Firefox and Safari, which uses the HTML5 Web Audio API where available, and falls back to `<audio>` elements.
-
-Forked from [SoundEffectManager](https://github.com/HenrikJoreteg/SoundEffectManager), but now includes support for:
-- loading files by url
-- loading files by data-uri
-- any audio codec supported by your target browser(s)
-
-## Installing
-
-`npm install sound-fx`
+SoundFX is a sound effect manager with support for Chrome, Firefox, Safari, Edge & IE9+, using the HTML5 Web Audio API where available, and falls back to `<audio>` elements.
 
 ## Using it
 
@@ -43,18 +34,18 @@ sfx.stop('taps');
 - `<Number> delay` - Delay before loading the file (ms)
 - `<Function (err, data)> callback` - Callback once the file has been loaded
 
-#### `play (<string> name, <boolean> loop, <func> callback)`
+#### `play (name, loop, callback)`
 - `<String> name` - Name of sound to play
 - `<Boolean> loop` - Play the sound on a loop
 - `<Function (err, data)> callback` - Callback once the sound has been played
 
-#### `stop (<string> name)`
+#### `stop (name)`
 - `<String> name` - Name of sound to stop playing
 
-#### `has (<string> name)`
+#### `has (name)`
 - `<String> name` - Check if a sound has been loaded
 
-#### `remove (<string> name)`
+#### `remove (name)`
 - `<String> name` - Name of sound to remove
 
 ## License
@@ -62,8 +53,8 @@ sfx.stop('taps');
 MIT
 
 ## Credits
+Originally built by [@HenrikJoreteg](http://twitter.com/henrikjoreteg) as [SoundEffectManager][SoundEffectManager]. Extended by [@munkyjunky](https://github.com/munkyjunky)
 
-Built (rather hastily) by [@HenrikJoreteg](http://twitter.com/henrikjoreteg) for use in [And Bang](http://andbang.com). Extended by [@munkyjunky](https://github.com/munkyjunky) for use at [Degree53](https://Degree53.com).
-
+[SoundEffectManager]: https://github.com/henrikjoreteg/soundeffectmanager
 [npm-image]: https://badge.fury.io/js/sound-fx.svg
 [npm-url]: https://npmjs.org/package/sound-fx
