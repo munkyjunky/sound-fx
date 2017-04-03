@@ -53,7 +53,7 @@
 
 		if (url.indexOf('data') !== -1 && typeof atob === 'function') {
 			self.sounds[name] = url;
-			return typeof cb === 'function' ? cb(url) : null;
+			return typeof cb === 'function' ? cb(null, url) : null;
 		}
 
 		var request = new XMLHttpRequest();
@@ -163,7 +163,9 @@
 		}
 
 		if (cb) {
-			source.onended = cb;
+			source.onended = function() {
+				cb(null);
+			};
 		}
 
 		source.connect(self.context.destination);
@@ -186,7 +188,7 @@
 
 			if (cb) {
 				currSound.addEventListener('ended', function () {
-					cb();
+					cb(null);
 				});
 			}
 
