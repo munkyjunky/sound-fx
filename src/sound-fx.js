@@ -151,17 +151,6 @@
 			this.sources[soundName] = source;
 		}
 
-		// Base64 data string
-		if (typeof buffer === 'string' && buffer.indexOf('data:audio') !== -1) {
-			var newBuffer = buffer.replace(/^data:audio\/(?:[\-\w]+);(?:[\w\-=]+;)?base64,/, '');
-
-			this.context.decodeAudioData(this._base64ToArrayBuffer(newBuffer), function(decodedData) {
-				source.buffer = decodedData;
-			});
-		} else {
-			source.buffer = buffer;
-		}
-
 		if (cb) {
 			source.onended = function() {
 				cb(null);
@@ -169,7 +158,19 @@
 		}
 
 		source.connect(self.context.destination);
-		'noteOn' in source ? source.noteOn(0) : source.start(0);
+
+		// Base64 data string
+		if (typeof buffer === 'string' && buffer.indexOf('data:audio') !== -1) {
+			var newBuffer = buffer.replace(/^data:audio\/(?:[\-\w]+);(?:[\w\-=]+;)?base64,/, '');
+
+			this.context.decodeAudioData(this._base64ToArrayBuffer(newBuffer), function(decodedData) {
+				source.buffer = decodedData;
+				'noteOn' in source ? source.noteOn(0) : source.start(0);
+			});
+		} else {
+			source.buffer = buffer;
+			'noteOn' in source ? source.noteOn(0) : source.start(0);
+		}
 	};
 
 	/* Play a loaded sound through an Audio element */
